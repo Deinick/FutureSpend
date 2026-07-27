@@ -19,9 +19,9 @@ This system addresses **calendar-driven financial awareness** — seeing your we
 
 ## 🌐 Live Demo
 
-The app is deployed on **GitHub Pages** with the backend on **Render**. Try it here: **[https://florykhan.github.io/FutureSpend/](https://florykhan.github.io/FutureSpend/)**
+The app is deployed on **GitHub Pages** with the backend on **Render**. Try it here: **[https://deinick.github.io/FutureSpend/](https://deinick.github.io/FutureSpend/)**
 
-**Backend API:** [https://futurespend.onrender.com](https://futurespend.onrender.com) — health check: `{"status":"ok","service":"futurespend"}`.
+**Backend API:** [https://futurespend-zb4s.onrender.com](https://futurespend-zb4s.onrender.com) — health check: `{"status":"ok","service":"futurespend"}`.
 
 > ⚠️ **Note:**  
 > On Render’s free tier the backend may **spin down** after inactivity; the first request can take 30–60 seconds. Refresh or wait and try again.
@@ -64,6 +64,8 @@ FutureSpend/
 │   ├── mock_bank.py                     # Demo bank balance & transactions
 │   ├── main.py                          # FastAPI app & all routes
 │   ├── requirements.txt                 # Python dependencies
+│   ├── Dockerfile                       # Container build (Render / Cloud Run)
+│   ├── cloudbuild.yaml                  # Optional: Cloud Build → Cloud Run CI
 │   ├── .env.example                     # GEMINI_API_KEY (optional)
 │   └── .python-version                  # 3.11.7
 │
@@ -106,7 +108,7 @@ You can run this project with **Python 3.11+** (backend) and **Node.js 20+** wit
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/florykhan/FutureSpend.git
+git clone https://github.com/Deinick/FutureSpend.git
 cd FutureSpend
 ```
 
@@ -135,6 +137,26 @@ npm run dev
 ```
 
 Runs at `http://localhost:3000`. With `NEXT_PUBLIC_API_URL` set, the frontend uses the backend for dashboard, calendar events, predictions, challenges, banking, AI coach, and leaderboard. Without it, the app runs with mock data only.
+
+---
+
+## 🚀 Deployment
+
+**Frontend → GitHub Pages.** [.github/workflows/deploy-frontend.yml](.github/workflows/deploy-frontend.yml) builds the Next.js static export and deploys it automatically on every push to `main`. Set the repository variable `NEXT_PUBLIC_API_URL` (Settings → Secrets and variables → Actions → Variables) to your backend's URL before running it — the value is baked into the build at build time, so changing it requires re-running the workflow.
+
+**Backend → Render (current) or Google Cloud Run.**
+
+- **Render:** [render.yaml](render.yaml) is a ready-to-use Blueprint — create a new Web Service pointing at this repo, set Root Directory to `backend`, and add `GEMINI_API_KEY` as an environment variable. Free tier spins down after 15 min idle (first request after that takes ~30–50s).
+- **Cloud Run:** [backend/Dockerfile](backend/Dockerfile) containerizes the API. Deploy with:
+  ```bash
+  cd backend
+  gcloud run deploy futurespend-backend \
+    --source . \
+    --region us-central1 \
+    --allow-unauthenticated \
+    --set-env-vars GEMINI_API_KEY=your-key-here
+  ```
+  [backend/cloudbuild.yaml](backend/cloudbuild.yaml) enables CI redeploys on push via a Cloud Build trigger (env vars persist across redeploys automatically once set).
 
 ---
 
