@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "@/styles/globals.css";
 import { HomePageBodyStyle } from "@/components/layout/HomePageBodyStyle";
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 export const metadata: Metadata = {
   title: "FutureSpend — See Tomorrow, Save Today, Share Success",
   description: "Intelligent personal finance: calendar-driven spending forecast, insights, and challenges.",
@@ -16,6 +18,7 @@ export default function RootLayout({
     <html lang="en" style={{ colorScheme: "dark" }}>
       <head>
         <meta name="theme-color" content="#0a0a0b" />
+        <link rel="manifest" href={`${BASE_PATH}/site.webmanifest`} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
